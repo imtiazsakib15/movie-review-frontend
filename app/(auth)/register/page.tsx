@@ -19,8 +19,8 @@ import { Label } from "@/components/ui/label";
 import {
   registerSchema,
   type RegisterFormValues,
-} from "@/features/auth/schemas/auth.schema";
-import { useRegister } from "@/features/auth/hooks/use-register";
+} from "@/features/auth/auth.schema";
+import { useRegister } from "@/features/auth/auth.hooks";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";

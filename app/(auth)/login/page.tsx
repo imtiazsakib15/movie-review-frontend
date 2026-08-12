@@ -12,11 +12,8 @@ import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { loginUser } from "@/features/auth/api/auth.api";
-import {
-  loginSchema,
-  type LoginFormValues,
-} from "@/features/auth/schemas/auth.schema";
+import { loginUser } from "@/features/auth/auth.api";
+import { loginSchema, type LoginFormValues } from "@/features/auth/auth.schema";
 
 export default function LoginPage() {
   const router = useRouter();

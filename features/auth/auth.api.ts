@@ -1,6 +1,6 @@
 import { apiFetch, ApiResponse } from "@/lib/api";
-import { User } from "../types/auth.types";
-import { LoginFormValues, RegisterFormValues } from "../schemas/auth.schema";
+import { User } from "./auth.types";
+import { LoginFormValues, RegisterFormValues } from "./auth.schema";
 
 export async function registerUser(
   payload: Omit<RegisterFormValues, "confirmPassword">,

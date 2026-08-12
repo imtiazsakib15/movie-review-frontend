@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Movie Review Portal",
-  description: "Reviews for movies and series.",
+  title: "Cinevoo",
+  description: "Discover. Rate. Review.",
 };
 
 export default function RootLayout({
