@@ -1,8 +1,9 @@
 import { apiFetch } from "@/lib/api";
-import { RegisterInput, RegisterResponse } from "../types/auth.types";
+import { RegisterResponse } from "../types/auth.types";
+import { RegisterFormValues } from "../schemas/register.schema";
 
 export async function registerUser(
-  payload: RegisterInput,
+  payload: Omit<RegisterFormValues, "confirmPassword">,
 ): Promise<RegisterResponse> {
   const response = await apiFetch<RegisterResponse>("/auth/register", {
     method: "POST",

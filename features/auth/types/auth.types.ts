@@ -1,16 +1,12 @@
+export type UserRole = "USER" | "ADMIN";
+
 export interface User {
   id: string;
-  name: string | null;
-  email: string;
-  role: "USER" | "ADMIN";
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface RegisterInput {
   name: string;
   email: string;
-  password: string;
+  role: UserRole;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface RegisterResponse {
