@@ -10,7 +10,7 @@ export function useRegister() {
     mutationFn: registerUser,
 
     onSuccess: (data) => {
-      queryClient.setQueryData(["current-user"], data.user);
+      queryClient.setQueryData(["current-user"], data);
     },
   });
 }

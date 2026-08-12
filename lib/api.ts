@@ -4,7 +4,7 @@ if (!API_URL) {
   throw new Error("NEXT_PUBLIC_API_URL is not configured");
 }
 
-interface ApiResponse<T> {
+export interface ApiResponse<T> {
   success: boolean;
   message: string;
   data: T;

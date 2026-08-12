@@ -19,11 +19,15 @@ import { Label } from "@/components/ui/label";
 import {
   registerSchema,
   type RegisterFormValues,
-} from "@/features/auth/schemas/register.schema";
+} from "@/features/auth/schemas/auth.schema";
 import { useRegister } from "@/features/auth/hooks/use-register";
 import { toast } from "sonner";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function RegisterPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
   const registerMutation = useRegister();
 
@@ -109,17 +113,31 @@ export default function RegisterPage() {
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
 
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                autoComplete="new-password"
-                {...register("password")}
-                className="border-zinc-700 bg-zinc-950 text-zinc-100 placeholder:text-zinc-500"
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  className="pr-10"
+                  {...register("password")}
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="size-4" />
+                  ) : (
+                    <Eye className="size-4" />
+                  )}
+                </button>
+              </div>
 
               {errors.password && (
-                <p className="text-sm text-red-400">
+                <p className="text-sm text-destructive">
                   {errors.password.message}
                 </p>
               )}
@@ -127,19 +145,37 @@ export default function RegisterPage() {
 
             {/* Confirm Password */}
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm password</Label>
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
 
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="Confirm your password"
-                autoComplete="new-password"
-                {...register("confirmPassword")}
-                className="border-zinc-700 bg-zinc-950 text-zinc-100 placeholder:text-zinc-500"
-              />
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm your password"
+                  className="pr-10"
+                  {...register("confirmPassword")}
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                  aria-label={
+                    showConfirmPassword
+                      ? "Hide confirm password"
+                      : "Show confirm password"
+                  }
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="size-4" />
+                  ) : (
+                    <Eye className="size-4" />
+                  )}
+                </button>
+              </div>
 
               {errors.confirmPassword && (
-                <p className="text-sm text-red-400">
+                <p className="text-sm text-destructive">
                   {errors.confirmPassword.message}
                 </p>
               )}
