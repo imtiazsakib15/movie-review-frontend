@@ -12,11 +12,12 @@ import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { loginUser } from "@/features/auth/auth.api";
 import { loginSchema, type LoginFormValues } from "@/features/auth/auth.schema";
+import { useLogin } from "@/features/auth/auth.hooks";
 
 export default function LoginPage() {
   const router = useRouter();
+  const loginMutation = useLogin();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -32,39 +33,24 @@ export default function LoginPage() {
     },
   });
 
-  const loginMutation = useMutation({
-    mutationFn: loginUser,
-
-    onSuccess: (data) => {
-      toast.success("Welcome back!", {
-        description: `You're signed in as ${data.data.name || data.data.email}.`,
-      });
-
-      router.push("/");
-      router.refresh();
-    },
-
-    onError: (error) => {
-      toast.error("Login failed", {
-        description:
-          error instanceof Error ? error.message : "Invalid email or password.",
-      });
-    },
-  });
-
   const onSubmit = (data: LoginFormValues) => {
-    loginMutation.mutate(data);
+    loginMutation.mutate(data, {
+      onSuccess: () => {
+        router.push("/");
+        router.refresh();
+      },
+    });
   };
 
   return (
     <main className="relative flex min-h-[calc(100vh-0px)] items-center justify-center overflow-hidden bg-neutral-950 px-4 py-12">
       {/* Background decoration */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/2 top-[-200px] h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-indigo-600/10 blur-[120px]" />
+        <div className="absolute left-1/2 -top-50 h-125 w-125 -translate-x-1/2 rounded-full bg-indigo-600/10 blur-[120px]" />
 
-        <div className="absolute bottom-[-150px] left-[-100px] h-[400px] w-[400px] rounded-full bg-purple-600/10 blur-[120px]" />
+        <div className="absolute -bottom-37.5 -left-25 h-100 w-100 rounded-full bg-purple-600/10 blur-[120px]" />
 
-        <div className="absolute right-[-100px] top-1/3 h-[350px] w-[350px] rounded-full bg-blue-600/10 blur-[120px]" />
+        <div className="absolute -right-25 top-1/3 h-87.5 w-87.5rounded-full bg-blue-600/10 blur-[120px]" />
       </div>
 
       <div className="relative z-10 w-full max-w-md">
@@ -93,7 +79,7 @@ export default function LoginPage() {
         </div>
 
         {/* Login Card */}
-        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-8">
+        <div className="rounded-2xl border border-white/10 bg-white/4 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-8">
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="space-y-5"
@@ -112,7 +98,7 @@ export default function LoginPage() {
                 autoComplete="email"
                 disabled={loginMutation.isPending}
                 aria-invalid={!!errors.email}
-                className="h-11 border-white/10 bg-white/[0.04] text-white placeholder:text-neutral-600 focus-visible:border-white/20 focus-visible:ring-white/10"
+                className="h-11 border-white/10 bg-white/4 text-white placeholder:text-neutral-600 focus-visible:border-white/20 focus-visible:ring-white/10"
                 {...register("email")}
               />
 
@@ -144,7 +130,7 @@ export default function LoginPage() {
                   autoComplete="current-password"
                   disabled={loginMutation.isPending}
                   aria-invalid={!!errors.password}
-                  className="h-11 border-white/10 bg-white/[0.04] pr-11 text-white placeholder:text-neutral-600 focus-visible:border-white/20 focus-visible:ring-white/10"
+                  className="h-11 border-white/10 bg-white/4 pr-11 text-white placeholder:text-neutral-600 focus-visible:border-white/20 focus-visible:ring-white/10"
                   {...register("password")}
                 />
 

@@ -52,7 +52,6 @@ export default function RegisterPage() {
 
     registerMutation.mutate(registerData, {
       onSuccess: () => {
-        toast.success("Account created successfully!");
         router.push("/");
       },
     });
