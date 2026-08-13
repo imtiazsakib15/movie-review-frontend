@@ -1,14 +1,7 @@
 import { apiFetch } from "@/lib/api";
-import type { MediaListResponse } from "./media.types";
+import type { PaginationMeta } from "@/types/pagination";
 
-interface GetMediaParams {
-  page?: number;
-  limit?: number;
-  type?: "MOVIE" | "SERIES";
-  sortBy?: "createdAt" | "avgRating" | "reviewCount";
-  sortOrder?: "asc" | "desc";
-  isFeatured?: boolean;
-}
+import type { GetMediaParams, Media, MediaListResponse } from "./media.types";
 
 export async function getMedia(
   params: GetMediaParams = {},
@@ -23,8 +16,28 @@ export async function getMedia(
     searchParams.set("limit", String(params.limit));
   }
 
+  if (params.search) {
+    searchParams.set("search", params.search);
+  }
+
   if (params.type) {
     searchParams.set("type", params.type);
+  }
+
+  if (params.access) {
+    searchParams.set("access", params.access);
+  }
+
+  if (params.genreId) {
+    searchParams.set("genreId", params.genreId);
+  }
+
+  if (params.releaseYear !== undefined) {
+    searchParams.set("releaseYear", String(params.releaseYear));
+  }
+
+  if (params.isFeatured !== undefined) {
+    searchParams.set("isFeatured", String(params.isFeatured));
   }
 
   if (params.sortBy) {
@@ -35,15 +48,14 @@ export async function getMedia(
     searchParams.set("sortOrder", params.sortOrder);
   }
 
-  if (params.isFeatured !== undefined) {
-    searchParams.set("isFeatured", String(params.isFeatured));
-  }
-
   const query = searchParams.toString();
 
-  const response = await apiFetch<MediaListResponse>(
+  const response = await apiFetch<Media[], PaginationMeta>(
     `/media${query ? `?${query}` : ""}`,
   );
 
-  return response.data;
+  return {
+    items: response.data,
+    meta: response.meta as PaginationMeta,
+  };
 }

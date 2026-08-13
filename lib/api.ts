@@ -4,11 +4,11 @@ if (!API_URL) {
   throw new Error("NEXT_PUBLIC_API_URL is not configured");
 }
 
-export interface ApiResponse<T> {
-  success: boolean;
+export interface ApiResponse<T, M = undefined> {
+  success: true;
   message: string;
   data: T;
-  meta?: unknown;
+  meta?: M;
 }
 
 export class ApiRequestError extends Error {
@@ -21,10 +21,10 @@ export class ApiRequestError extends Error {
   }
 }
 
-export async function apiFetch<T>(
+export async function apiFetch<T, M = undefined>(
   endpoint: string,
   options: RequestInit = {},
-): Promise<ApiResponse<T>> {
+): Promise<ApiResponse<T, M>> {
   const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
     credentials: "include",
@@ -34,10 +34,10 @@ export async function apiFetch<T>(
     },
   });
 
-  let result: ApiResponse<T> | null = null;
+  let result: ApiResponse<T, M>;
 
   try {
-    result = await response.json();
+    result = (await response.json()) as ApiResponse<T, M>;
   } catch {
     throw new ApiRequestError(
       "The server returned an invalid response",
@@ -45,9 +45,9 @@ export async function apiFetch<T>(
     );
   }
 
-  if (!response.ok || !result?.success) {
+  if (!response.ok || !result.success) {
     throw new ApiRequestError(
-      result?.message || "Something went wrong",
+      result.message || "Something went wrong",
       response.status,
     );
   }
