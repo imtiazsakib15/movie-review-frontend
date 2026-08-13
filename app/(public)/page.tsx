@@ -1,3 +1,4 @@
+import { CtaSection } from "@/components/home/CtaSection";
 import { FeaturedSection } from "@/components/home/FeaturedSection";
 import { GenreSection } from "@/components/home/GenreSection";
 import { HeroSection } from "@/components/home/HeroSection";
@@ -12,6 +13,7 @@ export default function HomePage() {
       <TopRatedSection />
       <LatestSection />
       <GenreSection />
+      <CtaSection />
     </>
   );
 }
