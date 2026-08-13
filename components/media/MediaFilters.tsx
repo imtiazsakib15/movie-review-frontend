@@ -56,7 +56,7 @@ export function MediaFilters({
     Boolean(filters.search) ||
     Boolean(filters.type) ||
     Boolean(filters.access) ||
-    Boolean(filters.genreId) ||
+    Boolean(filters.genre) ||
     Boolean(filters.releaseYear) ||
     filters.sortBy !== "createdAt" ||
     filters.sortOrder !== "desc";
@@ -126,12 +126,12 @@ export function MediaFilters({
 
         {/* Genre */}
         <select
-          value={filters.genreId ?? "ALL"}
+          value={filters.genre ?? "ALL"}
           onChange={(event) => {
             const value = event.target.value;
 
             onChange({
-              genreId: value === "ALL" ? undefined : value,
+              genre: value === "ALL" ? undefined : value,
               page: 1,
             });
           }}
@@ -140,7 +140,7 @@ export function MediaFilters({
           <option value="ALL">All genres</option>
 
           {genres.map((genre) => (
-            <option key={genre.id} value={genre.id}>
+            <option key={genre.id} value={genre.slug}>
               {genre.name}
             </option>
           ))}

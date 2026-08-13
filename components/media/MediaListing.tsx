@@ -35,7 +35,7 @@ export function MediaListing() {
 
       access: searchParams.get("access") ?? undefined,
 
-      genreId: searchParams.get("genreId") ?? undefined,
+      genre: searchParams.get("genre") ?? undefined,
 
       releaseYear: searchParams.get("releaseYear") ?? undefined,
 

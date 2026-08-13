@@ -58,7 +58,7 @@ export interface GetMediaParams {
 
   type?: MediaType;
   access?: MediaAccess;
-  genreId?: string;
+  genre?: string;
   releaseYear?: number;
 
   isFeatured?: boolean;

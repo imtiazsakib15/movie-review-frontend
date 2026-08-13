@@ -28,8 +28,8 @@ export async function getMedia(
     searchParams.set("access", params.access);
   }
 
-  if (params.genreId) {
-    searchParams.set("genreId", params.genreId);
+  if (params.genre) {
+    searchParams.set("genre", params.genre);
   }
 
   if (params.releaseYear !== undefined) {

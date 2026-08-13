@@ -9,7 +9,7 @@ export const mediaQuerySchema = z.object({
   type: z.enum(["MOVIE", "SERIES"]).optional(),
   access: z.enum(["FREE", "PREMIUM"]).optional(),
 
-  genreId: z.string().uuid().optional(),
+  genre: z.string().trim().toLowerCase().optional(),
   releaseYear: z.coerce
     .number()
     .int()
