@@ -1,4 +1,5 @@
 import { FeaturedSection } from "@/components/home/FeaturedSection";
+import { GenreSection } from "@/components/home/GenreSection";
 import { HeroSection } from "@/components/home/HeroSection";
 import { LatestSection } from "@/components/home/LatestSection";
 import { TopRatedSection } from "@/components/home/TopRatedSection";
@@ -10,6 +11,7 @@ export default function HomePage() {
       <FeaturedSection />
       <TopRatedSection />
       <LatestSection />
+      <GenreSection />
     </>
   );
 }
