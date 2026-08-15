@@ -13,6 +13,12 @@ import {
   useWatchlist,
 } from "@/features/watchlist/watchlist.hooks";
 
+import {
+  useCompleted,
+  useMarkAsCompleted,
+  useRemoveFromCompleted,
+} from "@/features/completed/completed.hooks";
+
 interface MediaActionsProps {
   mediaId: string;
   streamingUrl?: string | null;
@@ -25,15 +31,33 @@ export function MediaActions({ mediaId, streamingUrl }: MediaActionsProps) {
     Boolean(user),
   );
 
-  const addMutation = useAddToWatchlist();
-  const removeMutation = useRemoveFromWatchlist();
+  const { data: completed, isLoading: isCompletedLoading } = useCompleted(
+    Boolean(user),
+  );
+
+  const addWatchlistMutation = useAddToWatchlist();
+  const removeWatchlistMutation = useRemoveFromWatchlist();
+
+  const markCompletedMutation = useMarkAsCompleted();
+  const removeCompletedMutation = useRemoveFromCompleted();
 
   const isInWatchlist = Boolean(
     watchlist?.some((item) => item.mediaId === mediaId),
   );
 
+  const isCompleted = Boolean(
+    completed?.some((item) => item.mediaId === mediaId),
+  );
+
   const isWatchlistPending =
-    isWatchlistLoading || addMutation.isPending || removeMutation.isPending;
+    isWatchlistLoading ||
+    addWatchlistMutation.isPending ||
+    removeWatchlistMutation.isPending;
+
+  const isCompletedPending =
+    isCompletedLoading ||
+    markCompletedMutation.isPending ||
+    removeCompletedMutation.isPending;
 
   if (!user) {
     return (
@@ -72,11 +96,22 @@ export function MediaActions({ mediaId, streamingUrl }: MediaActionsProps) {
 
   const handleWatchlistToggle = () => {
     if (isInWatchlist) {
-      removeMutation.mutate(mediaId);
+      removeWatchlistMutation.mutate(mediaId);
       return;
     }
 
-    addMutation.mutate({
+    addWatchlistMutation.mutate({
+      mediaId,
+    });
+  };
+
+  const handleCompletedToggle = () => {
+    if (isCompleted) {
+      removeCompletedMutation.mutate(mediaId);
+      return;
+    }
+
+    markCompletedMutation.mutate({
       mediaId,
     });
   };
@@ -113,6 +148,26 @@ export function MediaActions({ mediaId, streamingUrl }: MediaActionsProps) {
           : isInWatchlist
             ? "Remove from Watchlist"
             : "Add to Watchlist"}
+      </Button>
+
+      <Button
+        type="button"
+        variant={isCompleted ? "default" : "outline"}
+        disabled={isCompletedPending}
+        onClick={handleCompletedToggle}
+        className={
+          isCompleted
+            ? "bg-emerald-500 text-white hover:bg-emerald-600"
+            : "border-white/10 bg-white/3 text-white hover:bg-white/10"
+        }
+      >
+        <Check className="size-4" />
+
+        {isCompletedLoading
+          ? "Checking..."
+          : isCompleted
+            ? "Completed"
+            : "Mark as Completed"}
       </Button>
     </div>
   );

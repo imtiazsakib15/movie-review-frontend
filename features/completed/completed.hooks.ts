@@ -11,10 +11,11 @@ import {
 
 export const completedQueryKey = ["completed"] as const;
 
-export function useCompleted() {
+export function useCompleted(enabled = true) {
   return useQuery({
     queryKey: completedQueryKey,
     queryFn: getCompleted,
+    enabled,
     staleTime: 2 * 60 * 1000,
   });
 }

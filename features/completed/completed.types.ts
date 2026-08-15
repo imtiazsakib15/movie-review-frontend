@@ -1,3 +1,5 @@
+import type { Media } from "@/features/media/media.types";
+
 export interface AddCompletedInput {
   mediaId: string;
 }
@@ -9,4 +11,5 @@ export interface CompletedItem {
   completedAt: string;
   createdAt: string;
   updatedAt: string;
+  media: Media;
 }
