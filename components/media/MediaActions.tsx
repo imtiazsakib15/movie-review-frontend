@@ -10,12 +10,8 @@ import { useCurrentUser } from "@/features/auth/auth.hooks";
 import {
   useAddToWatchlist,
   useRemoveFromWatchlist,
+  useWatchlist,
 } from "@/features/watchlist/watchlist.hooks";
-
-import {
-  useMarkAsCompleted,
-  useRemoveFromCompleted,
-} from "@/features/completed/completed.hooks";
 
 interface MediaActionsProps {
   mediaId: string;
@@ -25,19 +21,19 @@ interface MediaActionsProps {
 export function MediaActions({ mediaId, streamingUrl }: MediaActionsProps) {
   const { data: user } = useCurrentUser();
 
-  const addWatchlistMutation = useAddToWatchlist();
+  const { data: watchlist, isLoading: isWatchlistLoading } = useWatchlist(
+    Boolean(user),
+  );
 
-  const removeWatchlistMutation = useRemoveFromWatchlist();
+  const addMutation = useAddToWatchlist();
+  const removeMutation = useRemoveFromWatchlist();
 
-  const markCompletedMutation = useMarkAsCompleted();
-
-  const removeCompletedMutation = useRemoveFromCompleted();
+  const isInWatchlist = Boolean(
+    watchlist?.some((item) => item.mediaId === mediaId),
+  );
 
   const isWatchlistPending =
-    addWatchlistMutation.isPending || removeWatchlistMutation.isPending;
-
-  const isCompletedPending =
-    markCompletedMutation.isPending || removeCompletedMutation.isPending;
+    isWatchlistLoading || addMutation.isPending || removeMutation.isPending;
 
   if (!user) {
     return (
@@ -74,6 +70,17 @@ export function MediaActions({ mediaId, streamingUrl }: MediaActionsProps) {
     );
   }
 
+  const handleWatchlistToggle = () => {
+    if (isInWatchlist) {
+      removeMutation.mutate(mediaId);
+      return;
+    }
+
+    addMutation.mutate({
+      mediaId,
+    });
+  };
+
   return (
     <div className="flex flex-wrap gap-3">
       {streamingUrl && (
@@ -92,32 +99,20 @@ export function MediaActions({ mediaId, streamingUrl }: MediaActionsProps) {
 
       <Button
         type="button"
+        variant="outline"
         disabled={isWatchlistPending}
-        onClick={() =>
-          addWatchlistMutation.mutate({
-            mediaId,
-          })
-        }
-        variant="outline"
+        onClick={handleWatchlistToggle}
         className="border-white/10 bg-white/3 text-white hover:bg-white/10"
       >
-        <Bookmark className="size-4" />
-        {isWatchlistPending ? "Saving..." : "Add to Watchlist"}
-      </Button>
+        <Bookmark
+          className={isInWatchlist ? "size-4 fill-current" : "size-4"}
+        />
 
-      <Button
-        type="button"
-        disabled={isCompletedPending}
-        onClick={() =>
-          markCompletedMutation.mutate({
-            mediaId,
-          })
-        }
-        variant="outline"
-        className="border-white/10 bg-white/3 text-white hover:bg-white/10"
-      >
-        <Check className="size-4" />
-        {isCompletedPending ? "Saving..." : "Mark as Completed"}
+        {isWatchlistLoading
+          ? "Checking..."
+          : isInWatchlist
+            ? "Remove from Watchlist"
+            : "Add to Watchlist"}
       </Button>
     </div>
   );

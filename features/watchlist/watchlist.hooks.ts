@@ -11,10 +11,11 @@ import {
 
 export const watchlistQueryKey = ["watchlist"] as const;
 
-export function useWatchlist() {
+export function useWatchlist(enabled = true) {
   return useQuery({
     queryKey: watchlistQueryKey,
     queryFn: getWatchlist,
+    enabled,
     staleTime: 2 * 60 * 1000,
   });
 }

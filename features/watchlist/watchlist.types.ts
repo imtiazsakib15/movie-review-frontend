@@ -1,3 +1,5 @@
+import type { Media } from "@/features/media/media.types";
+
 export interface AddWatchlistInput {
   mediaId: string;
 }
@@ -7,4 +9,5 @@ export interface WatchlistItem {
   userId: string;
   mediaId: string;
   createdAt: string;
+  media: Media;
 }
