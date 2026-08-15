@@ -59,3 +59,11 @@ export async function getMedia(
     meta: response.meta as PaginationMeta,
   };
 }
+
+export async function getMediaBySlug(slug: string): Promise<Media> {
+  const response = await apiFetch<Media>(
+    `/media/slug/${encodeURIComponent(slug)}`,
+  );
+
+  return response.data;
+}

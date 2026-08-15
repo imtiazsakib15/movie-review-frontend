@@ -1,7 +1,9 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getMedia } from "./media.api";
+
+import { getMedia, getMediaBySlug } from "./media.api";
+
 import type { GetMediaParams } from "./media.types";
 
 export const mediaQueryKeys = {
@@ -9,6 +11,8 @@ export const mediaQueryKeys = {
 
   list: (params: GetMediaParams) =>
     [...mediaQueryKeys.all, "list", params] as const,
+
+  detail: (slug: string) => [...mediaQueryKeys.all, "detail", slug] as const,
 
   featured: () => [...mediaQueryKeys.all, "featured"] as const,
 
@@ -23,6 +27,15 @@ export function useMedia(params: GetMediaParams) {
     queryFn: () => getMedia(params),
     staleTime: 2 * 60 * 1000,
     placeholderData: (previousData) => previousData,
+  });
+}
+
+export function useMediaBySlug(slug: string) {
+  return useQuery({
+    queryKey: mediaQueryKeys.detail(slug),
+    queryFn: () => getMediaBySlug(slug),
+    enabled: Boolean(slug),
+    staleTime: 5 * 60 * 1000,
   });
 }
 
