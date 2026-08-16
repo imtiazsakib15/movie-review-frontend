@@ -16,6 +16,7 @@ import { ReviewForm } from "./ReviewForm";
 import { ReviewStatusBadge } from "./ReviewStatusBadge";
 
 import { useState } from "react";
+import { ConfirmDialog } from "../shared/ConfirmDialog";
 
 interface MyReviewCardProps {
   review: MyReview;
@@ -23,24 +24,13 @@ interface MyReviewCardProps {
 
 export function MyReviewCard({ review }: MyReviewCardProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const updateMutation = useUpdateReview(review.mediaId, review.id);
 
   const deleteMutation = useDeleteReview(review.mediaId);
 
   const canEdit = review.status !== "APPROVED";
-
-  const handleDelete = () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this review?",
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    deleteMutation.mutate(review.id);
-  };
 
   if (isEditing) {
     return (
@@ -119,13 +109,41 @@ export function MyReviewCard({ review }: MyReviewCardProps) {
               type="button"
               variant="ghost"
               size="sm"
+              onClick={() => setDeleteOpen(true)}
               disabled={deleteMutation.isPending}
-              onClick={handleDelete}
               className="text-neutral-400 hover:bg-red-500/10 hover:text-red-400"
             >
               <Trash2 className="size-4" />
-              {deleteMutation.isPending ? "Deleting..." : "Delete"}
+              Delete
             </Button>
+
+            <ConfirmDialog
+              open={deleteOpen}
+              title="Delete review"
+              description={
+                <>
+                  Are you sure you want to delete your review for{" "}
+                  <span className="font-medium text-neutral-300">
+                    "{review.media.title}"
+                  </span>
+                  ?
+                  <span className="mt-2 block">
+                    This review will be removed from your account history.
+                    Approved review deletions will also update the media rating.
+                  </span>
+                </>
+              }
+              confirmLabel="Delete review"
+              isLoading={deleteMutation.isPending}
+              onOpenChange={setDeleteOpen}
+              onConfirm={() => {
+                deleteMutation.mutate(review.id, {
+                  onSuccess: () => {
+                    setDeleteOpen(false);
+                  },
+                });
+              }}
+            />
           </div>
         </div>
 
