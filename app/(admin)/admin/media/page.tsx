@@ -18,16 +18,17 @@ import { AdminMediaTable } from "@/components/admin/media/AdminMediaTable";
 import { AdminMediaEmptyState } from "@/components/admin/media/AdminMediaEmptyState";
 
 import { useState } from "react";
-import { DeleteMediaDialog } from "@/components/admin/media/DeleteMediaDialog";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 
 export default function AdminMediaPage() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [deleteMediaId, setDeleteMediaId] = useState<string | null>(null);
-
-  const [deleteMediaTitle, setDeleteMediaTitle] = useState<string | null>(null);
+  const [deleteMedia, setDeleteMedia] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
 
   const filters = useMemo<GetMediaParams>(() => {
     const raw = {
@@ -93,28 +94,14 @@ export default function AdminMediaPage() {
   const media = data?.items ?? [];
   const meta = data?.meta;
 
-  const openDeleteDialog = (id: string, title: string) => {
-    setDeleteMediaId(id);
-    setDeleteMediaTitle(title);
-  };
-
-  const closeDeleteDialog = () => {
-    if (deleteMutation.isPending) {
+  const handleDeleteMedia = () => {
+    if (!deleteMedia) {
       return;
     }
 
-    setDeleteMediaId(null);
-    setDeleteMediaTitle(null);
-  };
-
-  const handleDelete = () => {
-    if (!deleteMediaId) {
-      return;
-    }
-
-    deleteMutation.mutate(deleteMediaId, {
+    deleteMutation.mutate(deleteMedia.id, {
       onSuccess: () => {
-        closeDeleteDialog();
+        setDeleteMedia(null);
       },
     });
   };
@@ -179,18 +166,40 @@ export default function AdminMediaPage() {
         <AdminMediaEmptyState />
       ) : (
         <>
-          <AdminMediaTable media={media} onDelete={openDeleteDialog} />
+          <AdminMediaTable
+            media={media}
+            onDelete={(id, title) => {
+              setDeleteMedia({
+                id,
+                title,
+              });
+            }}
+          />
 
-          <DeleteMediaDialog
-            open={Boolean(deleteMediaId)}
-            mediaTitle={deleteMediaTitle ?? undefined}
-            isDeleting={deleteMutation.isPending}
+          <ConfirmDialog
+            open={Boolean(deleteMedia)}
+            title="Delete media"
+            description={
+              <>
+                Are you sure you want to remove{" "}
+                <span className="font-medium text-neutral-300">
+                  "{deleteMedia?.title}"
+                </span>
+                ?
+                <span className="mt-2 block">
+                  This title will be unpublished and removed from the public
+                  catalog.
+                </span>
+              </>
+            }
+            confirmLabel="Delete media"
+            isLoading={deleteMutation.isPending}
             onOpenChange={(open) => {
-              if (!open) {
-                closeDeleteDialog();
+              if (!open && !deleteMutation.isPending) {
+                setDeleteMedia(null);
               }
             }}
-            onConfirm={handleDelete}
+            onConfirm={handleDeleteMedia}
           />
 
           {meta && meta.totalPages > 1 && (

@@ -11,37 +11,25 @@ import { GenreTable } from "@/components/admin/genres/GenreTable";
 import { GenreEmptyState } from "@/components/admin/genres/GenreEmptyState";
 import { GenreSkeleton } from "@/components/admin/genres/GenreSkeleton";
 import { useState } from "react";
-import { DeleteGenreDialog } from "@/components/admin/genres/DeleteGenreDialog";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 
 export default function AdminGenresPage() {
   const { data: genres = [], isLoading, isError, refetch } = useGenres();
   const deleteMutation = useDeleteGenre();
 
-  const [deleteGenreId, setDeleteGenreId] = useState<string | null>(null);
-  const [deleteGenreName, setDeleteGenreName] = useState<string | null>(null);
-
-  const openDeleteDialog = (genreId: string, genreName: string) => {
-    setDeleteGenreId(genreId);
-    setDeleteGenreName(genreName);
-  };
-
-  const closeDeleteDialog = () => {
-    if (deleteMutation.isPending) {
-      return;
-    }
-
-    setDeleteGenreId(null);
-    setDeleteGenreName(null);
-  };
+  const [deleteGenre, setDeleteGenre] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const handleDelete = () => {
-    if (!deleteGenreId) {
+    if (!deleteGenre) {
       return;
     }
 
-    deleteMutation.mutate(deleteGenreId, {
+    deleteMutation.mutate(deleteGenre.id, {
       onSuccess: () => {
-        closeDeleteDialog();
+        setDeleteGenre(null);
       },
     });
   };
@@ -103,16 +91,37 @@ export default function AdminGenresPage() {
       ) : genres.length === 0 ? (
         <GenreEmptyState />
       ) : (
-        <GenreTable genres={genres} onDelete={openDeleteDialog} />
+        <GenreTable
+          genres={genres}
+          onDelete={(id, name) => {
+            setDeleteGenre({
+              id,
+              name,
+            });
+          }}
+        />
       )}
 
-      <DeleteGenreDialog
-        open={Boolean(deleteGenreId)}
-        genreName={deleteGenreName ?? undefined}
-        isDeleting={deleteMutation.isPending}
+      <ConfirmDialog
+        open={Boolean(deleteGenre)}
+        title="Delete genre"
+        description={
+          <>
+            Are you sure you want to delete{" "}
+            <span className="font-medium text-neutral-300">
+              "{deleteGenre?.name}"
+            </span>
+            ?
+            <span className="mt-2 block">
+              A genre that is still linked to media cannot be deleted.
+            </span>
+          </>
+        }
+        confirmLabel="Delete genre"
+        isLoading={deleteMutation.isPending}
         onOpenChange={(open) => {
-          if (!open) {
-            closeDeleteDialog();
+          if (!open && !deleteMutation.isPending) {
+            setDeleteGenre(null);
           }
         }}
         onConfirm={handleDelete}

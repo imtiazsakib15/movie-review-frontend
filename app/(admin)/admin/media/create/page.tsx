@@ -32,14 +32,12 @@ export default function CreateMediaPage() {
         language: values.language || undefined,
 
         posterUrl: values.posterUrl || undefined,
-
         trailerUrl: values.trailerUrl || undefined,
-
         streamingUrl: values.streamingUrl || undefined,
       },
       {
-        onSuccess: (media) => {
-          router.push(`/admin/media/${media.id}/edit`);
+        onSuccess: () => {
+          router.push(`/admin/media`);
         },
       },
     );
