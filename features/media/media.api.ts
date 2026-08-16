@@ -1,7 +1,13 @@
 import { apiFetch } from "@/lib/api";
 import type { PaginationMeta } from "@/types/pagination";
 
-import type { GetMediaParams, Media, MediaListResponse } from "./media.types";
+import type {
+  CreateMediaInput,
+  GetMediaParams,
+  Media,
+  MediaListResponse,
+  UpdateMediaInput,
+} from "./media.types";
 
 export async function getMedia(
   params: GetMediaParams = {},
@@ -66,4 +72,37 @@ export async function getMediaBySlug(slug: string): Promise<Media> {
   );
 
   return response.data;
+}
+
+export async function getMediaById(id: string): Promise<Media> {
+  const response = await apiFetch<Media>(`/media/${encodeURIComponent(id)}`);
+
+  return response.data;
+}
+
+export async function createMedia(payload: CreateMediaInput): Promise<Media> {
+  const response = await apiFetch<Media>("/media", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+
+  return response.data;
+}
+
+export async function updateMedia(
+  id: string,
+  payload: UpdateMediaInput,
+): Promise<Media> {
+  const response = await apiFetch<Media>(`/media/${encodeURIComponent(id)}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+
+  return response.data;
+}
+
+export async function deleteMedia(id: string): Promise<void> {
+  await apiFetch<null>(`/media/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
 }

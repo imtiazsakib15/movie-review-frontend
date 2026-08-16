@@ -47,7 +47,7 @@ export interface Media {
   createdAt: string;
   updatedAt: string;
 
-  genres?: MediaGenre[];
+  genres: MediaGenre[];
 }
 
 export interface GetMediaParams {
@@ -80,3 +80,26 @@ export interface MediaSummary {
   releaseYear: number;
   posterUrl: string | null;
 }
+
+export interface CreateMediaInput {
+  title: string;
+  slug?: string;
+  type: MediaType;
+  access: MediaAccess;
+
+  description?: string;
+  releaseYear: number;
+  runtimeMinutes?: number;
+  language?: string;
+
+  posterUrl?: string;
+  trailerUrl?: string;
+  streamingUrl?: string;
+
+  isFeatured: boolean;
+  isPublished: boolean;
+
+  genreIds: string[];
+}
+
+export type UpdateMediaInput = Partial<CreateMediaInput>;

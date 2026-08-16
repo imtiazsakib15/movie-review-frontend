@@ -51,7 +51,7 @@ export default function AdminDashboardPage() {
               statsQuery.refetch();
               activityQuery.refetch();
             }}
-            className="mt-5 rounded-md border border-white/10 bg-white/4 px-4 py-2 text-sm text-neutral-300 transition-colors hover:bg-white/[0.08] hover:text-white"
+            className="mt-5 rounded-md border border-white/10 bg-white/4 px-4 py-2 text-sm text-neutral-300 transition-colors hover:bg-white/8 hover:text-white"
           >
             Try again
           </button>
