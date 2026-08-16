@@ -71,3 +71,13 @@ export interface UpdateReviewInput {
   content?: string;
   hasSpoiler?: boolean;
 }
+
+export interface ReviewMediaSummary {
+  id: string;
+  title: string;
+  slug: string;
+}
+
+export interface ReviewWithMedia extends Review {
+  media: ReviewMediaSummary;
+}

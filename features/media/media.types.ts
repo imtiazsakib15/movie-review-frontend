@@ -71,3 +71,12 @@ export interface MediaListResponse {
   items: Media[];
   meta: PaginationMeta;
 }
+
+export interface MediaSummary {
+  id: string;
+  title: string;
+  slug: string;
+  type: MediaType;
+  releaseYear: number;
+  posterUrl: string | null;
+}
