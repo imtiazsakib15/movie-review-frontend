@@ -7,6 +7,12 @@ export interface ReviewAuthor {
   name: string | null;
 }
 
+export interface ReviewMedia {
+  id: string;
+  title: string;
+  slug: string;
+}
+
 export interface Review {
   id: string;
   userId: string;
@@ -26,8 +32,17 @@ export interface Review {
   user: ReviewAuthor;
 }
 
+export interface MyReview extends Review {
+  media: ReviewMedia;
+}
+
 export interface ReviewListResponse {
   items: Review[];
+  meta: PaginationMeta;
+}
+
+export interface MyReviewListResponse {
+  items: MyReview[];
   meta: PaginationMeta;
 }
 
@@ -36,6 +51,12 @@ export interface ListReviewsForMediaParams {
   limit?: number;
   sortBy?: "createdAt" | "rating";
   sortOrder?: "asc" | "desc";
+}
+
+export interface ListMyReviewsParams {
+  page?: number;
+  limit?: number;
+  status?: ReviewStatus;
 }
 
 export interface CreateReviewInput {

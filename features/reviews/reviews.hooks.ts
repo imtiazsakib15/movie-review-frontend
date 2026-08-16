@@ -3,6 +3,7 @@
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -10,12 +11,13 @@ import { toast } from "sonner";
 import {
   createReview,
   deleteReview,
+  getMyReviews,
   getReviewsForMedia,
   updateReview,
 } from "./reviews.api";
 
 import type {
-  CreateReviewInput,
+  ListMyReviewsParams,
   ListReviewsForMediaParams,
   UpdateReviewInput,
 } from "./reviews.types";
@@ -25,6 +27,9 @@ export const reviewQueryKeys = {
 
   media: (mediaId: string, params?: Omit<ListReviewsForMediaParams, "page">) =>
     [...reviewQueryKeys.all, "media", mediaId, params ?? {}] as const,
+
+  mine: (params: ListMyReviewsParams) =>
+    [...reviewQueryKeys.all, "mine", params] as const,
 
   detail: (reviewId: string) =>
     [...reviewQueryKeys.all, "detail", reviewId] as const,
@@ -74,7 +79,9 @@ export function useCreateReview() {
         queryKey: ["media"],
       });
 
-      toast.success("Review submitted successfully.");
+      toast.success("Review submitted successfully.", {
+        description: "Your review will appear after moderation.",
+      });
     },
 
     onError: (error) => {
@@ -82,6 +89,15 @@ export function useCreateReview() {
         error instanceof Error ? error.message : "Failed to submit review.",
       );
     },
+  });
+}
+
+export function useMyReviews(params: ListMyReviewsParams) {
+  return useQuery({
+    queryKey: reviewQueryKeys.mine(params),
+    queryFn: () => getMyReviews(params),
+    staleTime: 2 * 60 * 1000,
+    placeholderData: (previousData) => previousData,
   });
 }
 
@@ -93,11 +109,11 @@ export function useUpdateReview(mediaId: string, reviewId: string) {
 
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: reviewQueryKeys.media(mediaId),
+        queryKey: [...reviewQueryKeys.all, "mine"],
       });
 
       queryClient.invalidateQueries({
-        queryKey: reviewQueryKeys.detail(reviewId),
+        queryKey: reviewQueryKeys.media(mediaId),
       });
 
       queryClient.invalidateQueries({
@@ -122,6 +138,10 @@ export function useDeleteReview(mediaId: string) {
     mutationFn: deleteReview,
 
     onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [...reviewQueryKeys.all, "mine"],
+      });
+
       queryClient.invalidateQueries({
         queryKey: reviewQueryKeys.media(mediaId),
       });

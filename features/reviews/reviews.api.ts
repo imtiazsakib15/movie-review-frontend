@@ -7,6 +7,9 @@ import type {
   Review,
   ReviewListResponse,
   UpdateReviewInput,
+  ListMyReviewsParams,
+  MyReview,
+  MyReviewListResponse,
 } from "./reviews.types";
 
 export async function getReviewsForMedia(
@@ -35,6 +38,35 @@ export async function getReviewsForMedia(
 
   const response = await apiFetch<Review[], PaginationMeta>(
     `/reviews/media/${encodeURIComponent(mediaId)}${query ? `?${query}` : ""}`,
+  );
+
+  return {
+    items: response.data,
+    meta: response.meta as PaginationMeta,
+  };
+}
+
+export async function getMyReviews(
+  params: ListMyReviewsParams = {},
+): Promise<MyReviewListResponse> {
+  const searchParams = new URLSearchParams();
+
+  if (params.page !== undefined) {
+    searchParams.set("page", String(params.page));
+  }
+
+  if (params.limit !== undefined) {
+    searchParams.set("limit", String(params.limit));
+  }
+
+  if (params.status) {
+    searchParams.set("status", params.status);
+  }
+
+  const query = searchParams.toString();
+
+  const response = await apiFetch<MyReview[], PaginationMeta>(
+    `/reviews/mine${query ? `?${query}` : ""}`,
   );
 
   return {
