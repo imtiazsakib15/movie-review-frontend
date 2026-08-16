@@ -16,7 +16,7 @@ import type { Media } from "@/features/media/media.types";
 
 interface AdminMediaTableProps {
   media: Media[];
-  onDelete: (id: string) => void;
+  onDelete: (id: string, title: string) => void;
 }
 
 export function AdminMediaTable({ media, onDelete }: AdminMediaTableProps) {
@@ -130,7 +130,7 @@ export function AdminMediaTable({ media, onDelete }: AdminMediaTableProps) {
 
                       <DropdownMenuItem
                         variant="destructive"
-                        onClick={() => onDelete(item.id)}
+                        onClick={() => onDelete(item.id, item.title)}
                       >
                         <Trash2 />
                         Delete
