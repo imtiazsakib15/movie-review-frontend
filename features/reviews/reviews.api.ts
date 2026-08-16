@@ -1,17 +1,46 @@
 import { apiFetch } from "@/lib/api";
+import type { PaginationMeta } from "@/types/pagination";
 
 import type {
   CreateReviewInput,
+  ListReviewsForMediaParams,
   Review,
+  ReviewListResponse,
   UpdateReviewInput,
 } from "./reviews.types";
 
-export async function getReviewsForMedia(mediaId: string): Promise<Review[]> {
-  const response = await apiFetch<Review[]>(
-    `/reviews/media/${encodeURIComponent(mediaId)}`,
+export async function getReviewsForMedia(
+  mediaId: string,
+  params: ListReviewsForMediaParams = {},
+): Promise<ReviewListResponse> {
+  const searchParams = new URLSearchParams();
+
+  if (params.page !== undefined) {
+    searchParams.set("page", String(params.page));
+  }
+
+  if (params.limit !== undefined) {
+    searchParams.set("limit", String(params.limit));
+  }
+
+  if (params.sortBy) {
+    searchParams.set("sortBy", params.sortBy);
+  }
+
+  if (params.sortOrder) {
+    searchParams.set("sortOrder", params.sortOrder);
+  }
+
+  const query = searchParams.toString();
+
+  const response = await apiFetch<Review[], PaginationMeta>(
+    `/reviews/media/${encodeURIComponent(mediaId)}${query ? `?${query}` : ""}`,
   );
 
-  return response.data;
+  return {
+    items: response.data,
+    meta: response.meta as PaginationMeta,
+  };
 }
 
 export async function getReviewById(reviewId: string): Promise<Review> {

@@ -11,12 +11,10 @@ export function ReviewSummary({
   ratingCount,
   reviewCount,
 }: ReviewSummaryProps) {
-  const hasRatings = ratingCount > 0;
-
   return (
     <div className="rounded-2xl border border-white/10 bg-white/3 p-6">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-        <div className="shrink-0">
+        <div>
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-neutral-600">
             Community rating
           </p>
@@ -25,7 +23,7 @@ export function ReviewSummary({
             <Star className="size-6 fill-yellow-400 text-yellow-400" />
 
             <span className="text-3xl font-bold text-white">
-              {hasRatings ? averageRating.toFixed(1) : "—"}
+              {ratingCount > 0 ? averageRating.toFixed(1) : "—"}
             </span>
 
             <span className="text-sm text-neutral-500">/ 10</span>

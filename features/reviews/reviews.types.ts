@@ -1,3 +1,5 @@
+import type { PaginationMeta } from "@/types/pagination";
+
 export type ReviewStatus = "PENDING" | "APPROVED" | "REJECTED";
 
 export interface ReviewAuthor {
@@ -22,6 +24,18 @@ export interface Review {
   updatedAt: string;
 
   user: ReviewAuthor;
+}
+
+export interface ReviewListResponse {
+  items: Review[];
+  meta: PaginationMeta;
+}
+
+export interface ListReviewsForMediaParams {
+  page?: number;
+  limit?: number;
+  sortBy?: "createdAt" | "rating";
+  sortOrder?: "asc" | "desc";
 }
 
 export interface CreateReviewInput {

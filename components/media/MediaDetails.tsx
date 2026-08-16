@@ -1,8 +1,9 @@
-import { ReviewsSection } from "../reviews/ReviewsSection";
-import { MediaHero } from "./MediaHero";
-import { MediaTrailer } from "./MediaTrailer";
+import { ReviewsSection } from "@/components/reviews/ReviewsSection";
 
 import type { Media } from "@/features/media/media.types";
+
+import { MediaHero } from "./MediaHero";
+import { MediaTrailer } from "./MediaTrailer";
 
 interface MediaDetailsProps {
   media: Media;

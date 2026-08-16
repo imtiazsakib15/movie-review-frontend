@@ -3,14 +3,15 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import {
-  CreateReviewFormInput,
   createReviewSchema,
+  type CreateReviewFormInput,
   type CreateReviewFormValues,
 } from "@/features/reviews/reviews.schema";
 
@@ -31,6 +32,7 @@ export function ReviewForm({
 }: ReviewFormProps) {
   const form = useForm<CreateReviewFormInput, unknown, CreateReviewFormValues>({
     resolver: zodResolver(createReviewSchema),
+
     defaultValues: {
       rating: existingReview?.rating ?? 10,
       content: existingReview?.content ?? "",
@@ -52,6 +54,7 @@ export function ReviewForm({
       className="space-y-5"
       noValidate
     >
+      {/* Rating */}
       <div className="space-y-2">
         <Label htmlFor="rating">Rating</Label>
 
@@ -61,6 +64,7 @@ export function ReviewForm({
             type="number"
             min={1}
             max={10}
+            step={1}
             {...form.register("rating", {
               valueAsNumber: true,
             })}
@@ -77,6 +81,7 @@ export function ReviewForm({
         )}
       </div>
 
+      {/* Content */}
       <div className="space-y-2">
         <Label htmlFor="content">Your review</Label>
 
@@ -95,6 +100,7 @@ export function ReviewForm({
         )}
       </div>
 
+      {/* Spoiler */}
       <label className="flex cursor-pointer items-center gap-3">
         <input
           type="checkbox"
@@ -107,13 +113,23 @@ export function ReviewForm({
         </span>
       </label>
 
+      {/* Buttons */}
       <div className="flex flex-wrap gap-3">
         <Button
           type="submit"
           disabled={isSubmitting}
           className="bg-white text-black hover:bg-neutral-200"
         >
-          {isSubmitting ? "Submitting..." : "Submit review"}
+          {isSubmitting ? (
+            <>
+              <Loader2 className="size-4 animate-spin" />
+              {existingReview ? "Updating..." : "Submitting..."}
+            </>
+          ) : existingReview ? (
+            "Update review"
+          ) : (
+            "Submit review"
+          )}
         </Button>
 
         {existingReview && onCancel && (

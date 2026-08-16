@@ -3,7 +3,7 @@ import { z } from "zod";
 export const createReviewSchema = z.object({
   rating: z.coerce
     .number()
-    .int()
+    .int("Rating must be a whole number")
     .min(1, "Rating must be at least 1")
     .max(10, "Rating must be at most 10"),
 
@@ -22,4 +22,6 @@ export type CreateReviewFormInput = z.input<typeof createReviewSchema>;
 
 export type CreateReviewFormValues = z.output<typeof createReviewSchema>;
 
-export type UpdateReviewFormValues = z.infer<typeof updateReviewSchema>;
+export type UpdateReviewFormInput = z.input<typeof updateReviewSchema>;
+
+export type UpdateReviewFormValues = z.output<typeof updateReviewSchema>;

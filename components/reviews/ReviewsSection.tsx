@@ -7,10 +7,7 @@ import { Button } from "@/components/ui/button";
 
 import { useCurrentUser } from "@/features/auth/auth.hooks";
 
-import {
-  useCreateReview,
-  useReviewsForMedia,
-} from "@/features/reviews/reviews.hooks";
+import { useCreateReview } from "@/features/reviews/reviews.hooks";
 
 import type { CreateReviewFormValues } from "@/features/reviews/reviews.schema";
 
@@ -35,9 +32,7 @@ export function ReviewsSection({
 
   const [isWriting, setIsWriting] = useState(false);
 
-  const { data: reviews = [], isLoading } = useReviewsForMedia(mediaId);
-
-  const createMutation = useCreateReview(mediaId);
+  const createMutation = useCreateReview();
 
   const handleCreateReview = (data: CreateReviewFormValues) => {
     createMutation.mutate(
@@ -51,10 +46,6 @@ export function ReviewsSection({
         },
       },
     );
-
-    if (!createMutation.isError) {
-      setIsWriting(false);
-    }
   };
 
   return (
@@ -80,8 +71,8 @@ export function ReviewsSection({
           reviewCount={reviewCount}
         />
 
-        {user && (
-          <div className="mt-8 rounded-2xl border border-white/10 bg-white/3 p-5 sm:p-6">
+        {user ? (
+          <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
             {!isWriting ? (
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -122,10 +113,8 @@ export function ReviewsSection({
               </div>
             )}
           </div>
-        )}
-
-        {!user && (
-          <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/3 p-6 text-center sm:flex-row sm:text-left">
+        ) : (
+          <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-center sm:flex-row sm:text-left">
             <div>
               <h3 className="font-semibold text-white">
                 Have something to say?
@@ -148,11 +137,7 @@ export function ReviewsSection({
         )}
 
         <div className="mt-8">
-          <ReviewList
-            mediaId={mediaId}
-            reviews={reviews}
-            isLoading={isLoading}
-          />
+          <ReviewList mediaId={mediaId} />
         </div>
       </div>
     </section>

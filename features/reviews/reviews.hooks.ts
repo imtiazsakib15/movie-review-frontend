@@ -1,6 +1,10 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import {
@@ -10,40 +14,60 @@ import {
   updateReview,
 } from "./reviews.api";
 
-import type { CreateReviewInput, UpdateReviewInput } from "./reviews.types";
+import type {
+  CreateReviewInput,
+  ListReviewsForMediaParams,
+  UpdateReviewInput,
+} from "./reviews.types";
 
 export const reviewQueryKeys = {
   all: ["reviews"] as const,
 
-  media: (mediaId: string) =>
-    [...reviewQueryKeys.all, "media", mediaId] as const,
+  media: (mediaId: string, params?: Omit<ListReviewsForMediaParams, "page">) =>
+    [...reviewQueryKeys.all, "media", mediaId, params ?? {}] as const,
 
   detail: (reviewId: string) =>
     [...reviewQueryKeys.all, "detail", reviewId] as const,
 };
 
 export function useReviewsForMedia(mediaId: string) {
-  return useQuery({
-    queryKey: reviewQueryKeys.media(mediaId),
-    queryFn: () => getReviewsForMedia(mediaId),
+  return useInfiniteQuery({
+    queryKey: reviewQueryKeys.media(mediaId, {
+      limit: 6,
+      sortBy: "createdAt",
+      sortOrder: "desc",
+    }),
+
+    queryFn: ({ pageParam }) =>
+      getReviewsForMedia(mediaId, {
+        page: pageParam,
+        limit: 6,
+        sortBy: "createdAt",
+        sortOrder: "desc",
+      }),
+
+    initialPageParam: 1,
+
+    getNextPageParam: (lastPage) => {
+      if (lastPage.meta.page >= lastPage.meta.totalPages) {
+        return undefined;
+      }
+      return lastPage.meta.page + 1;
+    },
     enabled: Boolean(mediaId),
     staleTime: 2 * 60 * 1000,
   });
 }
 
-export function useCreateReview(mediaId: string) {
+export function useCreateReview() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: CreateReviewInput) =>
-      createReview({
-        ...payload,
-        mediaId,
-      }),
+    mutationFn: createReview,
 
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: reviewQueryKeys.media(mediaId),
+        queryKey: reviewQueryKeys.media(variables.mediaId),
       });
 
       queryClient.invalidateQueries({

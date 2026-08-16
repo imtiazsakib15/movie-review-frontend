@@ -34,21 +34,55 @@ export function ReviewCard({
   const initial = displayName.charAt(0).toUpperCase();
 
   return (
-    <article className="rounded-2xl border border-white/10 bg-white/3 p-5 sm:p-6">
-      <div className="flex items-start gap-3">
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-white">
-          {(review.user.name ?? "U").charAt(0).toUpperCase()}
+    <article className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-white">
+            {initial}
+          </div>
+
+          <div className="min-w-0">
+            <p className="truncate font-medium text-white">{displayName}</p>
+
+            <p className="text-xs text-neutral-600">
+              {new Date(review.createdAt).toLocaleDateString()}
+            </p>
+          </div>
         </div>
 
-        <div className="min-w-0">
-          <p className="font-medium text-white">
-            {review.user.name ?? "Anonymous"}
-          </p>
+        {isOwner && (onEdit || onDelete) && (
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-neutral-500 hover:bg-white/5 hover:text-white"
+                />
+              }
+            >
+              <MoreHorizontal />
+            </DropdownMenuTrigger>
 
-          <p className="text-xs text-neutral-600">
-            {new Date(review.createdAt).toLocaleDateString()}
-          </p>
-        </div>
+            <DropdownMenuContent align="end">
+              {onEdit && review.status !== "APPROVED" && (
+                <DropdownMenuItem onClick={() => onEdit(review)}>
+                  Edit review
+                </DropdownMenuItem>
+              )}
+
+              {onDelete && (
+                <DropdownMenuItem
+                  variant="destructive"
+                  disabled={isDeleting}
+                  onClick={() => onDelete(review.id)}
+                >
+                  {isDeleting ? "Deleting..." : "Delete review"}
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
 
       <div className="mt-4 flex items-center gap-2">
