@@ -11,15 +11,19 @@ import { toast } from "sonner";
 import {
   createReview,
   deleteReview,
+  getModerationReviews,
   getMyReviews,
   getReviewsForMedia,
   updateReview,
+  updateReviewStatus,
 } from "./reviews.api";
 
 import type {
   ListMyReviewsParams,
   ListReviewsForMediaParams,
   UpdateReviewInput,
+  ListModerationParams,
+  ReviewStatus,
 } from "./reviews.types";
 
 export const reviewQueryKeys = {
@@ -30,6 +34,9 @@ export const reviewQueryKeys = {
 
   mine: (params: ListMyReviewsParams) =>
     [...reviewQueryKeys.all, "mine", params] as const,
+
+  moderation: (params: ListModerationParams) =>
+    [...reviewQueryKeys.all, "moderation", params] as const,
 
   detail: (reviewId: string) =>
     [...reviewQueryKeys.all, "detail", reviewId] as const,
@@ -61,6 +68,18 @@ export function useReviewsForMedia(mediaId: string) {
     },
     enabled: Boolean(mediaId),
     staleTime: 2 * 60 * 1000,
+  });
+}
+
+export function useModerationReviews(params: ListModerationParams) {
+  return useQuery({
+    queryKey: reviewQueryKeys.moderation(params),
+
+    queryFn: () => getModerationReviews(params),
+
+    staleTime: 30 * 1000,
+
+    placeholderData: (previousData) => previousData,
   });
 }
 
@@ -131,7 +150,51 @@ export function useUpdateReview(mediaId: string, reviewId: string) {
   });
 }
 
-export function useDeleteReview(mediaId: string) {
+export function useUpdateReviewStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      reviewId,
+      status,
+    }: {
+      reviewId: string;
+      status: Extract<ReviewStatus, "APPROVED" | "REJECTED">;
+    }) => updateReviewStatus(reviewId, status),
+
+    onSuccess: (review) => {
+      queryClient.invalidateQueries({
+        queryKey: [...reviewQueryKeys.all, "moderation"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [...reviewQueryKeys.all, "mine"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["media"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["admin"],
+      });
+
+      queryClient.setQueryData(reviewQueryKeys.detail(review.id), review);
+
+      toast.success(`Review ${review.status.toLowerCase()}.`);
+    },
+
+    onError: (error) => {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to update review status.",
+      );
+    },
+  });
+}
+
+export function useDeleteReview(mediaId?: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -143,11 +206,21 @@ export function useDeleteReview(mediaId: string) {
       });
 
       queryClient.invalidateQueries({
-        queryKey: reviewQueryKeys.media(mediaId),
+        queryKey: [...reviewQueryKeys.all, "moderation"],
       });
+
+      if (mediaId) {
+        queryClient.invalidateQueries({
+          queryKey: [...reviewQueryKeys.all, "media", mediaId],
+        });
+      }
 
       queryClient.invalidateQueries({
         queryKey: ["media"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["admin"],
       });
 
       toast.success("Review deleted successfully.");

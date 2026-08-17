@@ -81,3 +81,15 @@ export interface ReviewMediaSummary {
 export interface ReviewWithMedia extends Review {
   media: ReviewMediaSummary;
 }
+
+export interface ListModerationParams {
+  page?: number;
+  limit?: number;
+  status?: ReviewStatus;
+  mediaId?: string;
+}
+
+export interface ModerationReviewListResponse {
+  items: ReviewWithMedia[];
+  meta: PaginationMeta;
+}

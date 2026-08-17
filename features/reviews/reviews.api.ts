@@ -10,6 +10,10 @@ import type {
   ListMyReviewsParams,
   MyReview,
   MyReviewListResponse,
+  ListModerationParams,
+  ModerationReviewListResponse,
+  ReviewStatus,
+  ReviewWithMedia,
 } from "./reviews.types";
 
 export async function getReviewsForMedia(
@@ -83,6 +87,39 @@ export async function getReviewById(reviewId: string): Promise<Review> {
   return response.data;
 }
 
+export async function getModerationReviews(
+  params: ListModerationParams = {},
+): Promise<ModerationReviewListResponse> {
+  const searchParams = new URLSearchParams();
+
+  if (params.page !== undefined) {
+    searchParams.set("page", String(params.page));
+  }
+
+  if (params.limit !== undefined) {
+    searchParams.set("limit", String(params.limit));
+  }
+
+  if (params.status) {
+    searchParams.set("status", params.status);
+  }
+
+  if (params.mediaId) {
+    searchParams.set("mediaId", params.mediaId);
+  }
+
+  const query = searchParams.toString();
+
+  const response = await apiFetch<ReviewWithMedia[], PaginationMeta>(
+    `/reviews/moderation${query ? `?${query}` : ""}`,
+  );
+
+  return {
+    items: response.data,
+    meta: response.meta as PaginationMeta,
+  };
+}
+
 export async function createReview(
   payload: CreateReviewInput,
 ): Promise<Review> {
@@ -103,6 +140,23 @@ export async function updateReview(
     {
       method: "PATCH",
       body: JSON.stringify(payload),
+    },
+  );
+
+  return response.data;
+}
+
+export async function updateReviewStatus(
+  reviewId: string,
+  status: Extract<ReviewStatus, "APPROVED" | "REJECTED">,
+): Promise<ReviewWithMedia> {
+  const response = await apiFetch<ReviewWithMedia>(
+    `/reviews/${encodeURIComponent(reviewId)}/status`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({
+        status,
+      }),
     },
   );
 
