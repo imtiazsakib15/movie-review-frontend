@@ -1,7 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, Search, X } from "lucide-react";
+import {
+  Bookmark,
+  CheckCircle2,
+  Clapperboard,
+  Film,
+  LayoutDashboard,
+  Menu,
+  ShieldCheck,
+  Star,
+} from "lucide-react";
 
 import {
   Sheet,
@@ -25,171 +34,191 @@ export function MobileNav() {
           <Button
             variant="ghost"
             size="icon"
-            className="text-neutral-300 hover:bg-white/5 hover:text-white md:hidden"
+            className="size-10 rounded-xl border border-white/10 bg-white/3 text-neutral-400 transition-colors hover:bg-white/6 hover:text-white md:hidden"
             aria-label="Open navigation"
           />
         }
       >
-        <Menu />
+        <Menu className="size-5" />
       </SheetTrigger>
 
       <SheetContent
         side="right"
-        className="w-75 border-white/10 bg-neutral-950 text-neutral-100"
+        className="w-[min(88vw,380px)] border-white/10 bg-neutral-950 p-0 text-neutral-100"
       >
-        <SheetHeader>
-          <SheetTitle className="text-left text-white">Cinevoo</SheetTitle>
+        {/* Header */}
+        <SheetHeader className="border-b border-white/[0.07] px-5 py-5">
+          <SheetTitle className="flex items-center gap-3 text-left text-white">
+            <div className="flex size-9 items-center justify-center rounded-lg border border-white/10 bg-white/5">
+              <Film className="size-4 text-white" />
+            </div>
+
+            <div>
+              <span className="block text-base font-bold">Cinevoo</span>
+
+              <span className="block text-[10px] font-medium uppercase tracking-[0.2em] text-neutral-600">
+                Movie & Series
+              </span>
+            </div>
+          </SheetTitle>
         </SheetHeader>
 
-        <nav className="mt-8 flex flex-col gap-2">
-          <SheetClose
-            render={
-              <Link
-                href="/"
-                className="rounded-lg px-3 py-2.5 text-sm text-neutral-300 hover:bg-white/5 hover:text-white"
-              />
-            }
-          >
-            Home
-          </SheetClose>
+        <div className="flex h-[calc(100dvh-89px)] flex-col overflow-y-auto">
+          <nav className="flex-1 px-3 py-5">
+            {/* Explore */}
+            <NavSection title="Explore">
+              <MobileNavItem href="/" icon={LayoutDashboard}>
+                Home
+              </MobileNavItem>
 
-          <SheetClose
-            render={
-              <Link
-                href="/media"
-                className="rounded-lg px-3 py-2.5 text-sm text-neutral-300 hover:bg-white/5 hover:text-white"
-              />
-            }
-          >
-            Movies & Series
-          </SheetClose>
+              <MobileNavItem href="/media" icon={Clapperboard}>
+                Browse
+              </MobileNavItem>
 
-          <SheetClose
-            render={
-              <Link
-                href="/media?type=MOVIE"
-                className="rounded-lg px-3 py-2.5 text-sm text-neutral-300 hover:bg-white/5 hover:text-white"
-              />
-            }
-          >
-            Movies
-          </SheetClose>
+              <MobileNavItem href="/media?type=MOVIE" icon={Film}>
+                Movies
+              </MobileNavItem>
 
-          <SheetClose
-            render={
-              <Link
-                href="/media?type=SERIES"
-                className="rounded-lg px-3 py-2.5 text-sm text-neutral-300 hover:bg-white/5 hover:text-white"
-              />
-            }
-          >
-            Series
-          </SheetClose>
+              <MobileNavItem href="/media?type=SERIES" icon={Clapperboard}>
+                Series
+              </MobileNavItem>
+            </NavSection>
 
-          <SheetClose
-            render={
-              <Link
-                href="/media?search="
-                className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-neutral-300 hover:bg-white/5 hover:text-white"
-              />
-            }
-          >
-            <Search className="size-4" />
-            Search
-          </SheetClose>
+            {user && (
+              <>
+                <SectionDivider />
 
-          {user && (
-            <>
-              <div className="my-3 h-px bg-white/10" />
+                {/* User */}
+                <NavSection title="Your Cinevoo">
+                  <MobileNavItem href="/dashboard" icon={LayoutDashboard}>
+                    Dashboard
+                  </MobileNavItem>
 
-              <SheetClose
-                render={
-                  <Link
-                    href="/dashboard"
-                    className="rounded-lg px-3 py-2.5 text-sm text-neutral-300 hover:bg-white/5 hover:text-white"
-                  />
-                }
-              >
-                Dashboard
-              </SheetClose>
+                  <MobileNavItem href="/dashboard/watchlist" icon={Bookmark}>
+                    Watchlist
+                  </MobileNavItem>
 
-              <SheetClose
-                render={
-                  <Link
-                    href="/dashboard/watchlist"
-                    className="rounded-lg px-3 py-2.5 text-sm text-neutral-300 hover:bg-white/5 hover:text-white"
-                  />
-                }
-              >
-                Watchlist
-              </SheetClose>
-
-              <SheetClose
-                render={
-                  <Link
+                  <MobileNavItem
                     href="/dashboard/completed"
-                    className="rounded-lg px-3 py-2.5 text-sm text-neutral-300 hover:bg-white/5 hover:text-white"
-                  />
-                }
-              >
-                Completed
-              </SheetClose>
+                    icon={CheckCircle2}
+                  >
+                    Completed
+                  </MobileNavItem>
 
-              <SheetClose
-                render={
-                  <Link
-                    href="/dashboard/reviews"
-                    className="rounded-lg px-3 py-2.5 text-sm text-neutral-300 hover:bg-white/5 hover:text-white"
-                  />
-                }
-              >
-                My Reviews
-              </SheetClose>
+                  <MobileNavItem href="/dashboard/reviews" icon={Star}>
+                    My Reviews
+                  </MobileNavItem>
+                </NavSection>
 
-              {user.role === "ADMIN" && (
-                <SheetClose
-                  render={
-                    <Link
-                      href="/admin"
-                      className="rounded-lg px-3 py-2.5 text-sm text-neutral-300 hover:bg-white/5 hover:text-white"
-                    />
-                  }
-                >
-                  Admin Dashboard
-                </SheetClose>
-              )}
-            </>
-          )}
+                {user.role === "ADMIN" && (
+                  <>
+                    <SectionDivider />
 
-          {!user && (
-            <>
-              <div className="my-3 h-px bg-white/10" />
+                    <NavSection title="Administration">
+                      <MobileNavItem href="/admin" icon={ShieldCheck} accent>
+                        Admin Dashboard
+                      </MobileNavItem>
+                    </NavSection>
+                  </>
+                )}
+              </>
+            )}
 
-              <SheetClose
-                render={
-                  <Link
-                    href="/login"
-                    className="rounded-lg px-3 py-2.5 text-sm text-neutral-300 hover:bg-white/5 hover:text-white"
-                  />
-                }
-              >
-                Sign in
-              </SheetClose>
+            {!user && (
+              <>
+                <SectionDivider />
 
-              <SheetClose
-                render={
-                  <Link
-                    href="/register"
-                    className="rounded-lg bg-white px-3 py-2.5 text-center text-sm font-medium text-black hover:bg-neutral-200"
-                  />
-                }
-              >
-                Get started
-              </SheetClose>
-            </>
-          )}
-        </nav>
+                <NavSection title="Account">
+                  <MobileNavItem href="/login" icon={LayoutDashboard}>
+                    Sign in
+                  </MobileNavItem>
+
+                  <SheetClose
+                    render={
+                      <Link
+                        href="/register"
+                        className="mt-2 flex h-11 items-center justify-center rounded-xl bg-white px-4 text-sm font-semibold text-black transition-colors hover:bg-neutral-200"
+                      />
+                    }
+                  >
+                    Get started
+                  </SheetClose>
+                </NavSection>
+              </>
+            )}
+          </nav>
+
+          {/* Footer */}
+          <div className="border-t border-white/[0.07] px-5 py-4">
+            <p className="text-center text-[10px] font-medium uppercase tracking-[0.2em] text-neutral-700">
+              Cinevoo · Discover. Review. Remember.
+            </p>
+          </div>
+        </div>
       </SheetContent>
     </Sheet>
+  );
+}
+
+function NavSection({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-700">
+        {title}
+      </p>
+
+      <div className="space-y-1">{children}</div>
+    </div>
+  );
+}
+
+function SectionDivider() {
+  return <div className="my-5 h-px bg-white/[0.07]" />;
+}
+
+function MobileNavItem({
+  href,
+  icon: Icon,
+  children,
+  accent = false,
+}: {
+  href: string;
+  icon: React.ComponentType<{
+    className?: string;
+  }>;
+  children: React.ReactNode;
+  accent?: boolean;
+}) {
+  return (
+    <SheetClose
+      render={
+        <Link
+          href={href}
+          className={`group flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-all ${
+            accent
+              ? "text-indigo-300 hover:bg-indigo-400/10 hover:text-indigo-200"
+              : "text-neutral-400 hover:bg-white/5 hover:text-white"
+          }`}
+        />
+      }
+    >
+      <span
+        className={`flex size-8 items-center justify-center rounded-lg transition-colors ${
+          accent
+            ? "bg-indigo-400/10 text-indigo-300"
+            : "bg-white/[0.035] text-neutral-600 group-hover:bg-white/[0.07] group-hover:text-neutral-300"
+        }`}
+      >
+        <Icon className="size-4" />
+      </span>
+
+      <span>{children}</span>
+    </SheetClose>
   );
 }
