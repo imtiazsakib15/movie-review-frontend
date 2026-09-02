@@ -4,8 +4,50 @@ interface MediaTrailerProps {
   trailerUrl?: string | null;
 }
 
+function getYouTubeEmbedUrl(url: string) {
+  try {
+    const parsedUrl = new URL(url);
+
+    // youtube.com/watch?v=VIDEO_ID
+    if (
+      parsedUrl.hostname === "www.youtube.com" ||
+      parsedUrl.hostname === "youtube.com"
+    ) {
+      const videoId = parsedUrl.searchParams.get("v");
+
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}`;
+      }
+
+      // Already an embed URL
+      if (parsedUrl.pathname.startsWith("/embed/")) {
+        return url;
+      }
+    }
+
+    // youtu.be/VIDEO_ID
+    if (parsedUrl.hostname === "youtu.be") {
+      const videoId = parsedUrl.pathname.slice(1);
+
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}`;
+      }
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export function MediaTrailer({ trailerUrl }: MediaTrailerProps) {
   if (!trailerUrl) {
+    return null;
+  }
+
+  const embedUrl = getYouTubeEmbedUrl(trailerUrl);
+
+  if (!embedUrl) {
     return null;
   }
 
@@ -23,7 +65,7 @@ export function MediaTrailer({ trailerUrl }: MediaTrailerProps) {
         <div className="overflow-hidden rounded-2xl border border-white/10 bg-black">
           <div className="aspect-video">
             <iframe
-              src={trailerUrl}
+              src={embedUrl}
               title="Movie trailer"
               className="h-full w-full"
               loading="lazy"
