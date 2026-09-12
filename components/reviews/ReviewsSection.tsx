@@ -72,7 +72,7 @@ export function ReviewsSection({
         />
 
         {user ? (
-          <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
+          <div className="mt-8 rounded-2xl border border-white/10 bg-white/3 p-5 sm:p-6">
             {!isWriting ? (
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -114,7 +114,7 @@ export function ReviewsSection({
             )}
           </div>
         ) : (
-          <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-center sm:flex-row sm:text-left">
+          <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/3 p-6 text-center sm:flex-row sm:text-left">
             <div>
               <h3 className="font-semibold text-white">
                 Have something to say?

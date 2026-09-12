@@ -8,7 +8,6 @@ function getYouTubeEmbedUrl(url: string) {
   try {
     const parsedUrl = new URL(url);
 
-    // youtube.com/watch?v=VIDEO_ID
     if (
       parsedUrl.hostname === "www.youtube.com" ||
       parsedUrl.hostname === "youtube.com"
@@ -19,13 +18,11 @@ function getYouTubeEmbedUrl(url: string) {
         return `https://www.youtube.com/embed/${videoId}`;
       }
 
-      // Already an embed URL
       if (parsedUrl.pathname.startsWith("/embed/")) {
         return url;
       }
     }
 
-    // youtu.be/VIDEO_ID
     if (parsedUrl.hostname === "youtu.be") {
       const videoId = parsedUrl.pathname.slice(1);
 
@@ -52,17 +49,22 @@ export function MediaTrailer({ trailerUrl }: MediaTrailerProps) {
   }
 
   return (
-    <section className="border-t border-white/10">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mb-5 flex items-center gap-3">
-          <div className="flex size-9 items-center justify-center rounded-full bg-white/5">
-            <Play className="size-4 text-white" />
-          </div>
+    <section className="border-b border-white/10">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-18">
+        <div className="mb-7 flex items-end justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-neutral-600">
+              <Play className="size-3.5" />
+              Watch
+            </div>
 
-          <h2 className="text-xl font-semibold text-white">Trailer</h2>
+            <h2 className="mt-2 text-2xl font-bold text-white sm:text-3xl">
+              Official Trailer
+            </h2>
+          </div>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-white/10 bg-black">
+        <div className="overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl shadow-black/30">
           <div className="aspect-video">
             <iframe
               src={embedUrl}
