@@ -11,3 +11,16 @@ export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
 }
+
+export interface RagStats {
+  totalDocuments: number;
+  sourceTypeCounts: {
+    sourceType: string;
+    count: number;
+  }[];
+}
+
+export interface IngestResult {
+  message: string;
+  indexedCount: number;
+}

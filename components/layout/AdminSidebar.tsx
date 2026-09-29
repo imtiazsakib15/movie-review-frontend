@@ -8,6 +8,7 @@ import {
   Film,
   Home,
   MessageSquareText,
+  Sparkles,
   Tags,
   Users,
 } from "lucide-react";
@@ -128,6 +129,15 @@ export function AdminSidebar({
             active={
               pathname === "/admin/reviews" ||
               pathname.startsWith("/admin/reviews/")
+            }
+          />
+          <SidebarItem
+            href="/admin/rag"
+            label="AI / RAG"
+            icon={Sparkles}
+            collapsed={collapsed}
+            active={
+              pathname === "/admin/rag" || pathname.startsWith("/admin/rag/")
             }
           />
         </SidebarSection>

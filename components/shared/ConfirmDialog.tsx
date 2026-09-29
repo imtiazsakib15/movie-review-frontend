@@ -70,7 +70,7 @@ export function ConfirmDialog({
             {isLoading ? (
               <>
                 <Loader2 className="size-4 animate-spin" />
-                Deleting...
+                Please Wait...
               </>
             ) : (
               <>
