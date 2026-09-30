@@ -18,7 +18,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn("font-sans", inter.variable)}>
+    <html
+      lang="en"
+      className={cn("font-sans", inter.variable)}
+      suppressHydrationWarning={true}
+    >
       <body className="flex min-h-screen flex-col bg-neutral-950 text-neutral-100">
         <Providers>
           <main className="flex-1">
